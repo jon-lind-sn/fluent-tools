@@ -2,7 +2,7 @@
     <sys_relationship action="INSERT_OR_UPDATE">
         <advanced>true</advanced>
         <apply_to><![CDATA[answer = (function(table_name){  
-	// See if there are any script fields on this table.
+	// See if there are any script fields on this table.  If not, then don't offer the relationship.
     var dict = new GlideRecord("sys_dictionary");
 	dict.addQuery("name", table_name);
     dict.addNotNullQuery("element");
@@ -69,14 +69,14 @@
         <sys_created_by>jon.lind</sys_created_by>
         <sys_created_on>2024-08-02 22:21:17</sys_created_on>
         <sys_id>d6a39699ebf7c25036e7f734bad0cd0b</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>JS Modules</sys_name>
         <sys_package display_value="Fluent Extensions" source="cd258549fb3fc650d84afe7405efdcf1">cd258549fb3fc650d84afe7405efdcf1</sys_package>
         <sys_policy/>
         <sys_scope display_value="Fluent Extensions">cd258549fb3fc650d84afe7405efdcf1</sys_scope>
         <sys_update_name>sys_relationship_d6a39699ebf7c25036e7f734bad0cd0b</sys_update_name>
         <sys_updated_by>jon.lind</sys_updated_by>
-        <sys_updated_on>2024-08-02 22:28:03</sys_updated_on>
+        <sys_updated_on>2024-08-05 19:46:29</sys_updated_on>
     </sys_relationship>
     <sys_translated_text action="delete_multiple" query="documentkey=d6a39699ebf7c25036e7f734bad0cd0b"/>
 </record_update>
