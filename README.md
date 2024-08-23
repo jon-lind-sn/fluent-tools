@@ -16,6 +16,8 @@ NOTE: This is currently broken. You will get a "require not defined" error when 
 
 UI Action on the ES Module (sys_module) table generates a Script Include that works like "require" to call exported methods and properties cross-scope. To use it just go to any ES Module in your scope on your instance and use the "X_Require Script Include" list action.
 
+![X Require Script Include UI Action](./images/x_require_ui_action.png)
+
 For example, if you're in another scope and need to call a module in Scope A it may look something like this.
 
 ```javascript
@@ -25,8 +27,6 @@ var { methodA } = x_snc_scope_a.x_require(
 var z = methodA(paramB);
 gs.info(`Result of methodA: ${z}`);
 ```
-
-![X Require Script Include UI Action](./images/x_require_ui_action.png)
 
 To get boiler plate just return to whichever module you wish to call and use the UI Action again--it will give you sample code. Open that ES Module and inspect all `export` statements for functions and properties which you may call using x_require.
 
