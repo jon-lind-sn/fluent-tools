@@ -12,7 +12,7 @@ The ES Modules Relationship creates a new relationship that you can add to the C
 
 ## X_Require Script Include
 
-NOTE: This is currently broken. You will get a "require not defined" error when trying to call modules from other scopes. A patch is on the way, and when it's released the following will work for you.
+NOTE: This is currently **broken**. You will get a "require not defined" error when trying to call modules from other scopes. A patch is on the way, and when it's released the following will work for you.
 
 ### How it works
 
@@ -24,7 +24,7 @@ var x_require = function (path) {
 };
 ```
 
-If you're in another scope and need to call a module in Scope A it may look something like this.
+If you're in another scope and need to call a module in Scope A it may look something like this. To get the path string just open the sys_module record and copy the `path` value.
 
 ```javascript
 const { methodA } = x_snc_scope_a.x_require(
