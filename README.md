@@ -47,8 +47,6 @@ gs.info("Result of methodA: " + z);
 
 ### Helper UI Action
 
-I created a UI Action on the ES Module (sys_module) table which generates a Script Include that pass through to "require" to call exported methods and properties cross-scope. To use get the `x_require` script include generated, or to get boilerplate to use it, just go to any ES Module in your scope on your instance and use the "X_Require Script Include" list action.
+I created a UI Action to help with this. To generate the `x_require` method if it does not exist already, or to get boiler plate code to use once it does exist, just go to the the module record you wish to call and use the X Require Script Include link.
 
 ![X Require Script Include UI Action](./images/x_require_ui_action.png)
-
-If you forget how to use it then just return to whichever module you wish to call and use the UI Action again--it will give you sample code. Open that ES Module and inspect all `export` statements for functions and properties which you may call using x_require.
