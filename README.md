@@ -14,11 +14,17 @@ The ES Modules Relationship creates a new relationship that you can add to the C
 
 NOTE: This is currently broken. You will get a "require not defined" error when trying to call modules from other scopes. A patch is on the way, and when it's released the following will work for you.
 
-UI Action on the ES Module (sys_module) table generates a Script Include that works like "require" to call exported methods and properties cross-scope. To use it just go to any ES Module in your scope on your instance and use the "X_Require Script Include" list action.
+### How it works
 
-![X Require Script Include UI Action](./images/x_require_ui_action.png)
+In order to call a module from ES5 or cross scope it needs a wrapper in the same scope as the module. Luckily it's not necessary to map every export to the new wrapper object. Add this script include to your scope and name it `x_require`.
 
-For example, if you're in another scope and need to call a module in Scope A it may look something like this.
+```javascript
+var x_require = function (path) {
+  return require(path);
+};
+```
+
+If you're in another scope and need to call a module in Scope A it may look something like this.
 
 ```javascript
 var { methodA } = x_snc_scope_a.x_require(
@@ -28,12 +34,10 @@ var z = methodA(paramB);
 gs.info(`Result of methodA: ${z}`);
 ```
 
-To get boiler plate just return to whichever module you wish to call and use the UI Action again--it will give you sample code. Open that ES Module and inspect all `export` statements for functions and properties which you may call using x_require.
+### Helper UI Action
 
-The code for the script include is exceedingly simple and you may add it yourself manually instead of using the button. Just be sure to put it in the same scope as the modules you wish to call cross-scope.
+I created a UI Action on the ES Module (sys_module) table which generates a Script Include that pass through to "require" to call exported methods and properties cross-scope. To use get the `x_require` script include generated, or to get boilerplate to use it, just go to any ES Module in your scope on your instance and use the "X_Require Script Include" list action.
 
-```javascript
-var x_require = function (path) {
-  return require(path);
-};
-```
+![X Require Script Include UI Action](./images/x_require_ui_action.png)
+
+If you forget how to use it then just return to whichever module you wish to call and use the UI Action again--it will give you sample code. Open that ES Module and inspect all `export` statements for functions and properties which you may call using x_require.
