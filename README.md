@@ -27,11 +27,22 @@ var x_require = function (path) {
 If you're in another scope and need to call a module in Scope A it may look something like this.
 
 ```javascript
-var { methodA } = x_snc_scope_a.x_require(
+const { methodA } = x_snc_scope_a.x_require(
   "x_snc_scope_a/x-snc-jon-scoped-app/0.0.1/src/server/script.js"
 );
-var z = methodA(paramB);
+const z = methodA(paramB);
 gs.info(`Result of methodA: ${z}`);
+```
+
+In old-fashioned ES5 it's done like this:
+
+```javascript
+var myModule = x_snc_scope_a.x_require(
+  "x_snc_scope_a/x-snc-jon-scoped-app/0.0.1/src/server/script.js"
+);
+
+var z = myModule.methodA(paramB);
+gs.info("Result of methodA: " + z);
 ```
 
 ### Helper UI Action
