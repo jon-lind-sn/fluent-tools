@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_action">
+    <sys_ui_action action="DELETE">
+        <action_name>wrap_in_script_include</action_name>
+        <active>false</active>
+        <client>false</client>
+        <client_script_v2><![CDATA[function onClick(g_form) {
+
+}]]></client_script_v2>
+        <comments>This does not work due to a defect in X that will be fixed in a patch.  If you try to call a module cross scope you get the error `"require" is not defined.`. </comments>
+        <condition>current.sys_scope.scope != "global"</condition>
+        <form_action>true</form_action>
+        <form_button>false</form_button>
+        <form_button_v2>false</form_button_v2>
+        <form_context_menu>true</form_context_menu>
+        <form_link>true</form_link>
+        <form_menu_button_v2>false</form_menu_button_v2>
+        <form_style/>
+        <format_for_configurable_workspace>false</format_for_configurable_workspace>
+        <hint>Wrap this module in a script include for cross-scope access</hint>
+        <isolate_script>false</isolate_script>
+        <list_action>false</list_action>
+        <list_banner_button>false</list_banner_button>
+        <list_button>false</list_button>
+        <list_choice>false</list_choice>
+        <list_context_menu>false</list_context_menu>
+        <list_link>false</list_link>
+        <list_save_with_form_button>false</list_save_with_form_button>
+        <list_style/>
+        <messages/>
+        <name>Wrap in Script Include </name>
+        <onclick/>
+        <order>100</order>
+        <script><![CDATA[(function(current) {
+	// This does not work due to a defect in X that will be fixed in Y.  If you try to call a module cross scope you get the error `"require" is not defined.`.  Will re-enable this when fixed in Yokohoma.
+	if(current.sys_scope != gs.getCurrentApplicationId()){
+		gs.addErrorMessage("Attempt to call Wrap in Script Include from a scope that differs from the module.  Please switch to the scope of this module and try again.");
+		action.setRedirectURL(current);
+
+		return;
+	}
+    const path = current.path+"";
+    const scope = current.sys_scope.scope+"";
+	const extension = path.split('.').pop();
+	if(extension != "js") {
+		gs.addInfoMessage("Calling Wrap in Script Include on a non-JS file.  I'm not here to judge, but this may not be what you were trying to do.");
+	}
+
+    const name = to_snake_case(path.replace(scope + "/", ""));
+	
+	if(path.length > 100){
+		gs.addInfoMessage("WARNING! The generated name is longer than the 100 character limit for the script include name and api_name fields and thus was truncated.  Please verify and update the name field on the new script include if necessary.");
+	}
+    var script = `var ${name} = Class.create();
+${name}.prototype = (function() {
+    var x = require('${path}');
+
+    var proto = {
+        initialize: function() {},
+        type: '${name}'
+    };
+    return Object.assign(proto, x);
+})();`;
+
+	var gr = new GlideRecord("sys_script_include");
+	gr.initialize();
+	gr.name = name;
+	gr.description = `This script include was created to expose all exported elements of the EcmaScript Module ${path} for use cross-scope.
+
+Inspect the EcmaScript module record for available exports and call them like this:
+const { myCustomFunction, exportedProperty } = new ${scope}.${name}();
+
+myCustomFunction("Calling my custom function!");
+gs.addInfoMessage(myCustomFunction);
+`;
+	gr.script = script;
+	gr.sys_scope = current.sys_scope;
+	gr.access = "public";
+	gr.insert();
+
+    gs.addInfoMessage(`Created new script named ${name} (${api_name}). Seriously--consider renmaing it.`);
+
+	action.setRedirectURL(gr);
+
+    function to_snake_case(str) {
+        return str && str.match(
+                /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+            .map(s => s.toLowerCase())
+            .join('_');
+    }
+})(current);]]></script>
+        <show_insert>false</show_insert>
+        <show_multiple_update>false</show_multiple_update>
+        <show_query>false</show_query>
+        <show_update>true</show_update>
+        <sys_class_name>sys_ui_action</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2024-08-22 16:54:23</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>676884fb1b8cde1021b62064604bcb15</sys_id>
+        <sys_mod_count>34</sys_mod_count>
+        <sys_name>Wrap in Script Include </sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Fluent Extensions" source="cd258549fb3fc650d84afe7405efdcf1">cd258549fb3fc650d84afe7405efdcf1</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Fluent Extensions">cd258549fb3fc650d84afe7405efdcf1</sys_scope>
+        <sys_update_name>sys_ui_action_676884fb1b8cde1021b62064604bcb15</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2024-08-23 21:42:32</sys_updated_on>
+        <table>sys_module</table>
+        <ui11_compatible>true</ui11_compatible>
+        <ui16_compatible>false</ui16_compatible>
+    </sys_ui_action>
+    <sys_es_latest_script action="DELETE">
+        <id>676884fb1b8cde1021b62064604bcb15</id>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2024-08-22 16:54:23</sys_created_on>
+        <sys_id>21c888fb1b8cde1021b62064604bcb99</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2024-08-22 16:54:23</sys_updated_on>
+        <table>sys_ui_action</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Fluent Extensions">cd258549fb3fc650d84afe7405efdcf1</application>
+        <file_path/>
+        <instance_id>381c86a3eb830ed4c040fddacad0cd6c</instance_id>
+        <instance_name>xare</instance_name>
+        <name>sys_ui_action_676884fb1b8cde1021b62064604bcb15</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update sys_domain="global" table="sys_ui_action"&gt;&lt;sys_ui_action action="INSERT_OR_UPDATE"&gt;&lt;action_name&gt;wrap_in_script_include&lt;/action_name&gt;&lt;active&gt;false&lt;/active&gt;&lt;client&gt;false&lt;/client&gt;&lt;client_script_v2&gt;&lt;![CDATA[function onClick(g_form) {
+
+}]]&gt;&lt;/client_script_v2&gt;&lt;comments&gt;This does not work due to a defect in X that will be fixed in a patch.  If you try to call a module cross scope you get the error `"require" is not defined.`. &lt;/comments&gt;&lt;condition&gt;current.sys_scope.scope != "global"&lt;/condition&gt;&lt;form_action&gt;true&lt;/form_action&gt;&lt;form_button&gt;false&lt;/form_button&gt;&lt;form_button_v2&gt;false&lt;/form_button_v2&gt;&lt;form_context_menu&gt;true&lt;/form_context_menu&gt;&lt;form_link&gt;true&lt;/form_link&gt;&lt;form_menu_button_v2&gt;false&lt;/form_menu_button_v2&gt;&lt;form_style/&gt;&lt;format_for_configurable_workspace&gt;false&lt;/format_for_configurable_workspace&gt;&lt;hint&gt;Wrap this module in a script include for cross-scope access&lt;/hint&gt;&lt;isolate_script&gt;false&lt;/isolate_script&gt;&lt;list_action&gt;false&lt;/list_action&gt;&lt;list_banner_button&gt;false&lt;/list_banner_button&gt;&lt;list_button&gt;false&lt;/list_button&gt;&lt;list_choice&gt;false&lt;/list_choice&gt;&lt;list_context_menu&gt;false&lt;/list_context_menu&gt;&lt;list_link&gt;false&lt;/list_link&gt;&lt;list_save_with_form_button&gt;false&lt;/list_save_with_form_button&gt;&lt;list_style/&gt;&lt;messages/&gt;&lt;name&gt;Wrap in Script Include &lt;/name&gt;&lt;onclick/&gt;&lt;order&gt;100&lt;/order&gt;&lt;script&gt;&lt;![CDATA[(function(current) {
+	// This does not work due to a defect in X that will be fixed in Y.  If you try to call a module cross scope you get the error `"require" is not defined.`.  Will re-enable this when fixed in Yokohoma.
+	if(current.sys_scope != gs.getCurrentApplicationId()){
+		gs.addErrorMessage("Attempt to call Wrap in Script Include from a scope that differs from the module.  Please switch to the scope of this module and try again.");
+		action.setRedirectURL(current);
+
+		return;
+	}
+    const path = current.path+"";
+    const scope = current.sys_scope.scope+"";
+	const extension = path.split('.').pop();
+	if(extension != "js") {
+		gs.addInfoMessage("Calling Wrap in Script Include on a non-JS file.  I'm not here to judge, but this may not be what you were trying to do.");
+	}
+
+    const name = to_snake_case(path.replace(scope + "/", ""));
+	
+	if(path.length &gt; 100){
+		gs.addInfoMessage("WARNING! The generated name is longer than the 100 character limit for the script include name and api_name fields and thus was truncated.  Please verify and update the name field on the new script include if necessary.");
+	}
+    var script = `var ${name} = Class.create();
+${name}.prototype = (function() {
+    var x = require('${path}');
+
+    var proto = {
+        initialize: function() {},
+        type: '${name}'
+    };
+    return Object.assign(proto, x);
+})();`;
+
+	var gr = new GlideRecord("sys_script_include");
+	gr.initialize();
+	gr.name = name;
+	gr.description = `This script include was created to expose all exported elements of the EcmaScript Module ${path} for use cross-scope.
+
+Inspect the EcmaScript module record for available exports and call them like this:
+const { myCustomFunction, exportedProperty } = new ${scope}.${name}();
+
+myCustomFunction("Calling my custom function!");
+gs.addInfoMessage(myCustomFunction);
+`;
+	gr.script = script;
+	gr.sys_scope = current.sys_scope;
+	gr.access = "public";
+	gr.insert();
+
+    gs.addInfoMessage(`Created new script named ${name} (${api_name}). Seriously--consider renmaing it.`);
+
+	action.setRedirectURL(gr);
+
+    function to_snake_case(str) {
+        return str &amp;&amp; str.match(
+                /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+            .map(s =&gt; s.toLowerCase())
+            .join('_');
+    }
+})(current);]]&gt;&lt;/script&gt;&lt;show_insert&gt;false&lt;/show_insert&gt;&lt;show_multiple_update&gt;false&lt;/show_multiple_update&gt;&lt;show_query&gt;false&lt;/show_query&gt;&lt;show_update&gt;true&lt;/show_update&gt;&lt;sys_class_name&gt;sys_ui_action&lt;/sys_class_name&gt;&lt;sys_created_by&gt;jon.lind&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2024-08-22 16:54:23&lt;/sys_created_on&gt;&lt;sys_domain&gt;global&lt;/sys_domain&gt;&lt;sys_domain_path&gt;/&lt;/sys_domain_path&gt;&lt;sys_id&gt;676884fb1b8cde1021b62064604bcb15&lt;/sys_id&gt;&lt;sys_mod_count&gt;34&lt;/sys_mod_count&gt;&lt;sys_name&gt;Wrap in Script Include &lt;/sys_name&gt;&lt;sys_overrides/&gt;&lt;sys_package display_value="Fluent Extensions" source="cd258549fb3fc650d84afe7405efdcf1"&gt;cd258549fb3fc650d84afe7405efdcf1&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Fluent Extensions"&gt;cd258549fb3fc650d84afe7405efdcf1&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_action_676884fb1b8cde1021b62064604bcb15&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;jon.lind&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2024-08-23 21:42:32&lt;/sys_updated_on&gt;&lt;table&gt;sys_module&lt;/table&gt;&lt;ui11_compatible&gt;true&lt;/ui11_compatible&gt;&lt;ui16_compatible&gt;false&lt;/ui16_compatible&gt;&lt;/sys_ui_action&gt;&lt;sys_es_latest_script action="INSERT_OR_UPDATE"&gt;&lt;id&gt;676884fb1b8cde1021b62064604bcb15&lt;/id&gt;&lt;sys_created_by&gt;jon.lind&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2024-08-22 16:54:23&lt;/sys_created_on&gt;&lt;sys_id&gt;21c888fb1b8cde1021b62064604bcb99&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;jon.lind&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2024-08-22 16:54:23&lt;/sys_updated_on&gt;&lt;table&gt;sys_ui_action&lt;/table&gt;&lt;use_es_latest&gt;true&lt;/use_es_latest&gt;&lt;/sys_es_latest_script&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1352507517</payload_hash>
+        <record_name>Wrap in Script Include </record_name>
+        <reverted_from/>
+        <source>809560161bbb461021b62064604bcb20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2024-08-23 21:42:32</sys_created_on>
+        <sys_id>485416c41b18525021b62064604bcbfc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>1918130ea140000001</sys_recorded_at>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2024-08-23 21:42:32</sys_updated_on>
+        <type>UI Action</type>
+        <update_guid>405416c45f18525081f0685c17ae7bfc</update_guid>
+        <update_guid_history>405416c45f18525081f0685c17ae7bfc:1352507517,e958ce48b3d45250fd404cdb86a7ecce:428029764,b897824848d452509ec371fb711707d5:1095450218,7c574e085fd452507e3a9c36b4530d10:185622662,760786081bd45250a5644d97d273fcfa:1624800499,bb26c6c406d45250ceb4023229632978:-1621740040,270606c469d45250db591fe05f618e2b:2072559320,c355868410d45250bd0a91f7443d96d1:1069310517,8915ce44ded452508594c2ff4202e497:1480861040,49f40ac005d45250ffdb11693b6e238a:-671353408,388202c002d45250ffbfd6eb169fee2c:1757549612,39e10a8048d4525008aacde8bedbe9a9:-944743696,fb714e40fad452506d3c256c3ebf93ce:-172621551,629002406fd45250b2f28f433d8b2f2f:1497749963,d1bffdcc499452501dd6a40b22baebeb:-697082983,ccbedd4c661452508067df5bb3b262f5:-1525762055,9ced110c14145250b5d11d07ec766745:-1698656520,01bc5dc8be145250214c29844164f3e9:-950084671,419cd5c87c145250eab2dd4c53f57287:1533788937,f04c1d88f614525055a341f85bb4886e:-1092369223,4bbbd98864145250f2cd508a108e3aa3:-793925957,022b5188db14525017af2024a7c2e60b:-57838792,161cc9730ec012504e7fec94a7ed6a8f:-1555719646,d934d43b3dccde100f1deaf1e3892823:-441947970,e8c058374cccde10d3818d74cba72915:-449543316,43a018371bccde1068e09fdf1ae3ff6a:1002451125,a1a0d437caccde1083581f71b1d851a3:-433535947,d2809cf3bbccde1048d3f63bf2d684a2:-561027263,4270d0379eccde105359b21c1feab15c:-506875542,ca20d4f33fccde101ef613ef0bbe11d0:-915549705,5a8d4c3386ccde1033b2ccf383824a0f:-158903037,286d8033fbccde104ea6ad9ec39254cf:-798384154,44790cfbe88cde101cff2adce214889f:1553121806,d159c8fbea8cde10cd5d3ec9a20401ff:-1621813044,39c8c8fb4f8cde10e077ed9caed62ff4:-2124977296</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2024-08-23 22:08:48</sys_created_on>
+        <sys_db_object display_value="" name="sys_ui_action">sys_ui_action</sys_db_object>
+        <sys_id>812c7877861c4d4884d1af1a02699da4</sys_id>
+        <sys_metadata>676884fb1b8cde1021b62064604bcb15</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Wrap in Script Include </sys_name>
+        <sys_package display_value="Fluent Extensions" source="cd258549fb3fc650d84afe7405efdcf1">cd258549fb3fc650d84afe7405efdcf1</sys_package>
+        <sys_parent display_value="Sys Module">aae621f997270210c24e7d56f053afa6</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="Fluent Extensions">cd258549fb3fc650d84afe7405efdcf1</sys_scope>
+        <sys_scope_delete display_value="">29c45a428e5744bd97f1a1d45e6548b1</sys_scope_delete>
+        <sys_update_name>sys_ui_action_676884fb1b8cde1021b62064604bcb15</sys_update_name>
+        <sys_update_version display_value="sys_ui_action_676884fb1b8cde1021b62064604bcb15">485416c41b18525021b62064604bcbfc</sys_update_version>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2024-08-23 22:08:48</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

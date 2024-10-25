@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_action">
+    <sys_ui_action action="INSERT_OR_UPDATE">
+        <action_name>add_x_require_script_include</action_name>
+        <active>true</active>
+        <client>false</client>
+        <client_script_v2><![CDATA[function onClick(g_form) {
+
+}]]></client_script_v2>
+        <comments>This does not work due to a defect in X that will be fixed in a patch.  If you try to call a module cross scope you get the error `"require" is not defined.`.  &#13;
+&#13;
+Use it like this:&#13;
+&#13;
+var {methodA, propertyB } = x_snc_scope_name.x_require("full/path/of/es_module/in/sys_module/table");&#13;
+&#13;
+Or &#13;
+var x = x_snc_scope_name.x_require("full/path/of/es_module/in/sys_module/table");&#13;
+x.methodA("test")&#13;
+gs.info(x.propertyB);</comments>
+        <condition>current.sys_scope.scope != "global"</condition>
+        <form_action>true</form_action>
+        <form_button>false</form_button>
+        <form_button_v2>false</form_button_v2>
+        <form_context_menu>true</form_context_menu>
+        <form_link>true</form_link>
+        <form_menu_button_v2>false</form_menu_button_v2>
+        <form_style/>
+        <format_for_configurable_workspace>false</format_for_configurable_workspace>
+        <hint>Create a "x_require" function in this scope for calling ES modules within this scope from outside.</hint>
+        <isolate_script>false</isolate_script>
+        <list_action>false</list_action>
+        <list_banner_button>false</list_banner_button>
+        <list_button>false</list_button>
+        <list_choice>false</list_choice>
+        <list_context_menu>false</list_context_menu>
+        <list_link>false</list_link>
+        <list_save_with_form_button>false</list_save_with_form_button>
+        <list_style/>
+        <messages/>
+        <name>Create X_Require Script</name>
+        <onclick/>
+        <order>100</order>
+        <script><![CDATA[(function(current) {
+	action.setRedirectURL(current);
+	action.setReturnURL(current);
+
+	// This did not work due to a defect in X that was fixed in Patch 2.  If you try to call a module cross scope 
+	// before updating to XP2 you get the error `"require" is not defined.`.
+	if(current.sys_scope != gs.getCurrentApplicationId()){
+		gs.addErrorMessage(`Attempt to add the x_require script include to a scope that does not match this module record. Please select the the matching scope ${current.sys_scope.name} and try again.`);
+	
+		return;
+	}
+
+    const path = current.path+"";
+    const scope = current.sys_scope.scope+"";
+
+	var usage_sample = `const {methodA, propertyB } = ${scope}.x_require("${path}"); // ES6+ 
+
+var x = ${scope}.x_require("${path}"); // ES5
+x.methodA("test")
+gs.info(x.propertyB);`;
+
+	var gr = new GlideRecord("sys_script_include");
+	gr.addQuery("name", "x_require");
+	gr.addQuery("sys_scope", current.sys_scope);
+	gr.query();
+
+	if(gr.hasNext()){
+		gs.addInfoMessage("x_require is already defined. You may use it like this:<br>" + usage_sample.replace(/\n/g, "<br>"));
+		return;
+	}
+
+    var script = `var x_require = function(path) {
+	return require(path);
+};
+`;
+
+	gr.initialize();
+	gr.name = "x_require";
+	gr.description = `This script include was created to alow importing ES Modules using their path field from the sys_module table for cross-scope calls.
+
+Open the sys_module (EcmaScript module) record, copy its full "path" from the path field and inspect it for available exports beforing calling x_require similar to this:
+
+${usage_sample}
+`;
+	gr.script = script;
+	gr.sys_scope = current.sys_scope;
+	gr.access = "public";
+	gr.insert();
+	action.setRedirectURL(gr);
+	action.setReturnURL(gr);
+	
+	gs.addInfoMessage("x_require created. Sample usage: <br>" + usage_sample.replace(/\n/g, "<br>"));
+
+})(current);]]></script>
+        <show_insert>false</show_insert>
+        <show_multiple_update>false</show_multiple_update>
+        <show_query>false</show_query>
+        <show_update>true</show_update>
+        <sys_class_name>sys_ui_action</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2024-08-23 21:18:27</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>57ce8a001b18525021b62064604bcb16</sys_id>
+        <sys_mod_count>25</sys_mod_count>
+        <sys_name>Create X_Require Script</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Fluent Extensions" source="cd258549fb3fc650d84afe7405efdcf1">cd258549fb3fc650d84afe7405efdcf1</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Fluent Extensions">cd258549fb3fc650d84afe7405efdcf1</sys_scope>
+        <sys_update_name>sys_ui_action_57ce8a001b18525021b62064604bcb16</sys_update_name>
+        <sys_updated_by>jon.lind@snc</sys_updated_by>
+        <sys_updated_on>2024-10-25 22:53:04</sys_updated_on>
+        <table>sys_module</table>
+        <ui11_compatible>true</ui11_compatible>
+        <ui16_compatible>false</ui16_compatible>
+    </sys_ui_action>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>57ce8a001b18525021b62064604bcb16</id>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2024-08-23 21:30:58</sys_created_on>
+        <sys_id>baa11e801b18525021b62064604bcb2b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2024-08-23 21:30:58</sys_updated_on>
+        <table>sys_ui_action</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+</record_update>
