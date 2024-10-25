@@ -12,11 +12,11 @@ The ES Modules Relationship creates a new relationship that you can add to the C
 
 ## X_Require Script Include
 
-NOTE: This is currently **broken**. You will get a "require not defined" error when trying to call modules from other scopes. A patch is on the way, and when it's released the following will work for you.
+NOTE: This **was broken** before Xanadu Patch 2. You will get a "require not defined" error when trying to call modules from other scopes. A patch is on the way, and when it's released the following will work for you.
 
 ### How it works
 
-In order to call a module from ES5 or cross scope it needs a wrapper in the same scope as the module. Luckily it's not necessary to map every export to the new wrapper object. Add this script include to your scope and name it `x_require`.
+In order to call a module from ES5 or cross scope it needs a wrapper in the same scope as the module. Luckily it's not necessary to map every export to the new wrapper object. Add this script include to your scope and name it `x_require` (I have also added a UI Action to do this automatically--see the next section if you have installed this scope in your instance).
 
 ```javascript
 var x_require = function (path) {
