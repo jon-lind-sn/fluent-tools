@@ -19,7 +19,7 @@ NOTE: This **was broken** before Xanadu Patch 2. You will get a "require not def
 In order to call a module from ES5 or cross scope it needs a wrapper in the same scope as the module. Luckily it's not necessary to map every export to the new wrapper object. Add this script include to your scope and name it `x_require` (I have also added a UI Action to do this automatically--see the next section if you have installed this scope in your instance).
 
 ```javascript
-var x_require = function (path) {
+const x_require = function (path) {
   return require(path);
 };
 ```
