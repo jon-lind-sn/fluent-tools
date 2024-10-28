@@ -70,7 +70,7 @@ gs.info(x.propertyB);`;
 		return;
 	}
 
-    var script = `var x_require = function(path) {
+    var script = `const x_require = function(path) {
 	return require(path);
 };
 `;
