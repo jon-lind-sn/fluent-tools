@@ -12,24 +12,37 @@ The ES Modules Relationship creates a new relationship that you can add to the C
 
 ## X_Require Script Include
 
-NOTE: This **was broken** before Xanadu Patch 2. You will get a "require not defined" error when trying to call modules from other scopes. A patch is on the way, and when it's released the following will work for you.
-
 ### How it works
 
-In order to call a module from ES5 or cross scope it needs a wrapper in the same scope as the module. Luckily it's not necessary to map every export to the new wrapper object. Add this script include to your scope and name it `x_require` (I have also added a UI Action to do this automatically--see the next section if you have installed this scope in your instance).
+In order to call a module from ES5 or cross scope it needs a wrapper in the same scope as the module. Luckily it's not necessary to map every export to the new wrapper object. Add this script include to your scope and name it `x_require`.  If you have installed this application into your instance you'll find the sample code in a script include called `global.x_require`.  Just copy and paste it into your scope and update the API_NAME constant.
 
 ```javascript
-const x_require = function (path) {
-  return require(path);
-};
+const x_require = (function() { 
+    if (typeof require == "undefined") {
+        return function(path) {
+			// **Use the API Name value of this script**
+			const API_NAME = "global.x_require"; 
+            var nowGr = new GlideRecord("sys_script_include");
+            nowGr.get("api_name", API_NAME);
+            nowGr.script = "require('" + path + "')";
+
+            var evaluator = new GlideScopedEvaluator();
+            var obj = evaluator.evaluateScript(nowGr, "script");
+
+            return obj;
+        };
+    } else {
+        return function(path) {
+            return require(path);
+        };
+    }
+})();
 ```
 
-If you're in another scope and need to call a module in Scope A it may look something like this. To get the path string just open the sys_module record and copy the `path` value.
+If you're in another scope and need to call a module in "Scope A" it may look something like this. To get the path string just open the sys_module record and copy the `path` value.
 
 ```javascript
-const { methodA } = x_snc_scope_a.x_require(
-  "x_snc_scope_a/x-snc-jon-scoped-app/0.0.1/src/server/script.js"
-);
+const { methodA } = x_snc_scope_a.x_require("x_snc_scope_a/x-snc-jon-scoped-app/0.0.1/src/server/script.js");
 const z = methodA(paramB);
 gs.info(`Result of methodA: ${z}`);
 ```
@@ -37,16 +50,8 @@ gs.info(`Result of methodA: ${z}`);
 In old-fashioned ES5 it's done like this:
 
 ```javascript
-var myModule = x_snc_scope_a.x_require(
-  "x_snc_scope_a/x-snc-jon-scoped-app/0.0.1/src/server/script.js"
-);
+var myModule = x_snc_scope_a.x_require("x_snc_scope_a/x-snc-jon-scoped-app/0.0.1/src/server/script.js");
 
-var z = myModule.methodA(paramB);
+var z = myModule.methodA("Hello world!");
 gs.info("Result of methodA: " + z);
 ```
-
-### Helper UI Action
-
-I created a UI Action to help with this. To generate the `x_require` method if it does not exist already, or to get boiler plate code to use once it does exist, just go to the the module record you wish to call and use the X Require Script Include link.
-
-![X Require Script Include UI Action](./images/x_require_ui_action.png)
