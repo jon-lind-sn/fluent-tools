@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>global.x_require</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Script used to call "require" cross scope.  Use it as a template by copying and pasting the contents into your scope and changing the API_NAME to match. &#13;
+&#13;
+Once installed use the script by calling {scope_name}.x_require with the path that you copied from the module in the sys_module table.&#13;
+&#13;
+ES6+:&#13;
+const {methodA, propertyB } = x_snc_scope_name.x_require("full/path/of/es_module/in/sys_module/table");&#13;
+&#13;
+ES5:&#13;
+var myModule = x_snc_scope_name.x_require("full/path/of/es_module/in/sys_module/table");&#13;
+myModule.methodA();&#13;
+myModule.propertyB;</description>
+        <mobile_callable>false</mobile_callable>
+        <name>x_require</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[// Polyfill due to an error fixed in Xanadu Patch 2 and Washington DC Patch 9 where "require" 
+// is undefined when calling scripts with have require statements.
+// Thank you Chris Nanda @ Tanium!
+const x_require = (function() { 
+    if (typeof require == "undefined") {
+        return function(path) {
+			// **Use the API Name value of this script**
+			const API_NAME = "global.x_require"; 
+            var nowGr = new GlideRecord("sys_script_include");
+            nowGr.get("api_name", API_NAME);
+            nowGr.script = "require('" + path + "')";
+
+            var evaluator = new GlideScopedEvaluator();
+            var obj = evaluator.evaluateScript(nowGr, "script");
+
+            return obj;
+        };
+    } else {
+        return function(path) {
+            return require(path);
+        };
+    }
+})();]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2024-11-05 19:51:48</sys_created_on>
+        <sys_id>966ff27f97a1d210c24e7d56f053af53</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>x_require</sys_name>
+        <sys_package display_value="Fluent Extensions" source="cd258549fb3fc650d84afe7405efdcf1">cd258549fb3fc650d84afe7405efdcf1</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Fluent Extensions">cd258549fb3fc650d84afe7405efdcf1</sys_scope>
+        <sys_update_name>sys_script_include_966ff27f97a1d210c24e7d56f053af53</sys_update_name>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2024-11-05 20:03:45</sys_updated_on>
+    </sys_script_include>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>966ff27f97a1d210c24e7d56f053af53</id>
+        <sys_created_by>jon.lind</sys_created_by>
+        <sys_created_on>2024-11-05 19:51:47</sys_created_on>
+        <sys_id>df9047bf97a1d210c24e7d56f053afcb</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>jon.lind</sys_updated_by>
+        <sys_updated_on>2024-11-05 19:51:47</sys_updated_on>
+        <table>sys_script_include</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+</record_update>
