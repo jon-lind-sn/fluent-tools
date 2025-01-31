@@ -20,8 +20,8 @@ In order to call a module from ES5 or cross scope it needs a wrapper in the same
 const x_require = (function() { 
     if (typeof require == "undefined") {
         return function(path) {
-			// **Use the API Name value of this script**
-			const API_NAME = "global.x_require"; 
+	    // **Use the API Name value of this script**
+	    const API_NAME = "global.x_require"; 
             var nowGr = new GlideRecord("sys_script_include");
             nowGr.get("api_name", API_NAME);
             nowGr.script = "require('" + path + "')";
